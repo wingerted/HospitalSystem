@@ -1,0 +1,28 @@
+﻿@model HospitalSystem.Models.department
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>department</legend>
+
+    <div class="display-label">DepartmentName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DepartmentName)
+    </div>
+
+    <div class="display-label">DepartmentDescribe</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DepartmentDescribe)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

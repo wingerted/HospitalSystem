@@ -1,0 +1,18 @@
+﻿@model HospitalSystem.Models.RegisterInformation
+@{
+    ViewBag.Title = "Showregisterinformation";
+}
+
+
+
+<h2>挂号信息</h2>
+
+<p>
+    病号：@ViewBag.register.PatientId 姓名：@ViewBag.register.PatientName 
+    科室名: @ViewBag.register.DepartmentName
+    就诊号: @ViewBag.register.QueueNumber
+</p>
+
+<div>
+   @Html.ActionLink("继续挂号", "RegisterIndex")
+</div>

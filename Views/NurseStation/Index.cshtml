@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "护士台叫号";
+}
+<script type="text/javascript">
+    $(function () {
+        $('#tb tbody tr:odd').css("backgroundColor", "#dff0d8");
+        $('#tb tbody tr:even').css("backgroundColor", "#fcf8e3");
+        //tr:odd为奇数行，索引从0开始，0算偶数。
+    })
+</script>
+@*30秒定时刷新*@
+<meta http-equiv="refresh" content="30">
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span8">
+            <h2>挂号情况</h2>
+            <table class="table table-condensed table-hover" id="tb">
+                <thead>
+                    <tr>
+                        <th>科室编号
+                        </th>
+                        <th>科室名
+                        </th>
+                        <th>当前号
+                        </th>
+                        <th>总人数
+                        </th>
+                        <th>叫号
+                        </th>
+                        <th>撤销
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in @ViewBag.RegisterQueue)
+                    {
+                        <tr>
+                            <td>
+                                @item.DepartmentId
+                            </td>
+                            <td>
+                                @item.Department
+                            </td>
+                            <td>
+                                @item.CurrentNumber
+                            </td>
+                            <td>
+                                @item.TotalNumber
+                            </td>
+                            <td>
+                                @*<button class="btn btn-small btn-primary  btn-block" type="button" value="@item.DepartmentId" onclick="CallPatient">叫号</button>*@
+                                @Html.ActionLink("叫号", "CallPatient", new { departmentId = item.DepartmentId },new { @class = "btn btn-small btn-block" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("撤销", "CancelCallPatient", new { departmentId = item.DepartmentId }, new { @class = "btn btn-small btn-block" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+        </div>
+
+        <div class="span4">
+            <h2>注意</h2>
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <h4>提示!
+                </h4>
+                <strong>护士根据挂号排队队列依次叫号，过号作废需重新到护士台领取号码！</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

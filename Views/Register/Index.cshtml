@@ -1,0 +1,107 @@
+﻿@model HospitalSystem.Models.RegisterInformation
+@{
+    ViewBag.Title = "挂号";
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#ok").click(function () {
+
+            if ($("#PatientID").val() == "") {
+                alert("错误！未输入病人卡号"); PatientID.focus(); return;
+            }
+            var data = {
+                PatientId: $('[name=PatientId]').val(),
+                DepartmentID: $('[name=DepartmentID]:checked').val()
+            }
+            if (data.DepartmentID == null) {
+                alert("错误！未选择科室"); return;
+            }
+            $.ajax({
+                url: "/Register/Index",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    $("#rname").html(data.PatientName);
+                    $("#rqueue").html(data.QueueNumber);
+                    $("#rmoney").html(data.RegisterMoney + ' 元');
+                    $('#modal').modal('show');
+                }
+            });
+        });
+        $("#subok").click(function () {
+            window.location.href = "/Register/Index";
+        });
+
+    })
+</script>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <h2>科室
+            </h2>
+
+            <table class="nav nav-list well">
+                @using (Html.BeginForm())
+                {
+                    foreach (var item in @ViewBag.departmentlist)
+                    {
+                    <tr>
+                        <td>@item.DepartmentName</td>
+                        <td>@Html.RadioButtonFor(m => m.DepartmentID, (int)@item.DepartmentID)</td>
+                    </tr>                 
+                    }
+                }
+            </table>
+        </div>
+        <div class="span6">
+            <h2>病人信息
+            </h2><button class="btn " id="subok" data-dismiss="modal" aria-hidden="true">@Html.ActionLink("新建病历", "RegisterAndCreate")</button>
+            
+            <div class="editor-label">
+                @Html.LabelFor(m => m.PatientId)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.PatientId, new { @id = "PatientID" })
+            </div>
+
+            <button class="btn btn-primary" id="ok" type="submit">确认</button>
+
+            <div id="modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">挂号收费信息
+                    </h3>
+                </div>
+                <div class="modal-body">
+
+                    <div class="editor-label">
+                        病人姓名
+                    </div>
+                    <div class="editor-field" id="rname">
+                    </div>
+                    <div class="editor-label">
+                        就诊号
+                    </div>
+                    <div class="editor-field" id="rqueue">
+                    </div>
+                    <div class="editor-label">
+                        请付款
+                    </div>
+                    <div class="editor-field" id="rmoney">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="subok" data-dismiss="modal" aria-hidden="true">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

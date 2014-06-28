@@ -1,0 +1,219 @@
+﻿@{
+    ViewBag.Title = "医生诊疗";
+
+}
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>病人信息</h2>
+            <div>
+                @using (Ajax.BeginForm("PatientSearch", "Doctor", new AjaxOptions
+                    {
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "GET",
+                        OnFailure = "searchFailed",
+                        LoadingElementId = "ajax-loader",
+                        UpdateTargetId = "patient",
+                    }))
+                {   
+                    <p>
+                        病人编号: 
+                        <input id="patientId" name="patientId" class="input-medium search-query" type="text"/>
+                        <button type="submit" class="btn">查找</button>
+                    </p>
+                }
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>病人编号
+                            </th>
+                            <th>姓名
+                            </th>
+                            <th>电话
+                            </th>
+                            <th>性别
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="patient">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+
+                <fieldset>
+                    <legend>药品信息</legend>
+                    <div>
+                        @using (Ajax.BeginForm("AddMedicine", "Doctor", new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.InsertAfter,
+                                HttpMethod = "POST",
+                                OnFailure = "searchFailed",
+                                LoadingElementId = "ajax-loader",
+                                UpdateTargetId = "medicine_result",
+                            }))
+                        {
+                            <input id="medicineName" name="medicineName" class="input-medium search-query" type="text" autocomplete="false"/>
+                        
+                            <button type="submit" class="btn">确定</button>
+                        }
+                    </div>
+                </fieldset>
+                <form>
+                    <table id="medicineList" class="table">
+                        <thead>
+                            <tr>
+                                <th>药品编号
+                                </th>
+                                <th>药品名称
+                                </th>
+                                <th>数量
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicine_result">
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span12">
+                <fieldset>
+                    <legend>检验项目</legend>
+                    <div>
+                        @using (Ajax.BeginForm("AddExamine", "Doctor", new AjaxOptions
+                            {
+                                InsertionMode = InsertionMode.InsertAfter,
+                                HttpMethod = "Post",
+                                OnFailure = "searchFailed",
+                                LoadingElementId = "ajax-loader",
+                                UpdateTargetId = "examine_result",
+                            }))
+                        {
+                            <input id="examineName" name="examineName" class="input-medium search-query" type="text" autocomplete="false"/>
+                            <button type="submit" class="btn">确定</button>
+                        }
+                    </div>
+                        
+                        
+                </fieldset>
+            
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>检验项目编号
+                            </th>
+                            <th>检验项目名称
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="examine_result">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+
+                <fieldset>
+                    <legend>诊断信息</legend>
+                    <textarea id="Diagnostic"></textarea>
+                    <button id="ok" type="submit" class="btn">确认信息</button>
+                </fieldset>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#medicineName').autocomplete({
+        source: function (query, process) {
+            var matchCount = this.options.items;//返回结果集最大数量
+            $.post("/Doctor/MedicineSearch", { "matchInfo": query, "matchCount": matchCount }, function (respData) {
+                return process(respData);
+            });
+        },
+        formatItem: function (item) {
+            return item;
+        },
+        setValue: function (item) {
+            return { 'data-value': item, 'real-value': item };
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $('#examineName').autocomplete({
+        source: function (query, process) {
+            var matchCount = this.options.items;//返回结果集最大数量
+            $.post("/Doctor/ExamineSearch", { "matchInfo": query, "matchCount": matchCount }, function (respData) {
+                return process(respData);
+            });
+        },
+        formatItem: function (item) {
+            return item;
+        },
+        setValue: function (item) {
+            return { 'data-value': item, 'real-value': item };
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#ok").click(function () {
+            var ajax = {
+                PatientId: $("#patient > tr").children()[0].innerText,
+                Diagnostic: $("#Diagnostic").val(),
+                MedicineRecord: [],
+                ExamRecord: []
+            };
+
+
+            for (var i = 0; i < $("#examine_result > tr").children().length; i++) {
+                if (i % 2 == 0) {
+                    ajax.ExamRecord.push({
+                        "ExamineID": $("#examine_result > tr").children()[i].innerText,
+                        "ExamineName": $("#examine_result > tr").children()[i + 1].innerText
+                    });
+                }
+            }
+            
+            for (var i = 0; i < $("#medicine_result > tr").children().length; i++) {
+                if (i % 3 == 0) {
+                    ajax.MedicineRecord.push({
+                        "MedicineID": $("#medicine_result > tr").children()[i].innerText,
+                        "MedicineCount": $("#medicine_result > tr").children()[i + 2].children[0].value
+                    });
+                    
+                }
+            }
+
+            $.ajax({
+                url: "/Doctor/AddMessage",
+                async: false,
+                type: "POST",
+                data: JSON.stringify(ajax),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $("#rname").html(data.PatientName);
+                    $("#rqueue").html(data.QueueNumber);
+                    $('#modal').modal('show');
+                    
+                }
+            });
+            window.location.href = "/Doctor/Index";
+        });
+        //$("#ok").click(function () {
+        //    window.location.href = "/Doctor/Index";
+        //});
+    })
+</script>

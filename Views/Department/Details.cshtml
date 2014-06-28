@@ -1,0 +1,25 @@
+﻿@model HospitalSystem.Models.department
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>department</legend>
+
+    <div class="display-label">DepartmentName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DepartmentName)
+    </div>
+
+    <div class="display-label">DepartmentDescribe</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DepartmentDescribe)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.DepartmentID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

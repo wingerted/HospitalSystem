@@ -1,0 +1,89 @@
+﻿@model List<HospitalSystem.Models.ExamineRecord>
+@{
+    ViewBag.Title = "登录";
+}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span4">
+            <h2>病人信息</h2>
+            @using (Html.BeginForm("GetExamineRecordList", "Examine"))
+            {
+                <p>
+                    病人ID: <br/>@Html.TextBox("patientId")<br/>
+                    <input  class="btn btn-primary" type="submit" value="查询" />
+                </p>
+            }
+            @*}*@
+            <div id="results">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>病人编号
+                            </th>
+                            <th>姓名
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (@ViewBag.currentPatient != null)
+                        {
+                            <tr>
+                                <td>
+                                    @ViewBag.currentPatient.PatientID
+                                </td>
+                                <td>
+                                    @ViewBag.currentPatient.Name
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="span8">
+            <h2>检验项目</h2>
+            @using (Html.BeginForm("AddExamineResult", "Examine"))
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>检验单编号
+                            </th>
+                            <th>检验项目
+                            </th>
+                            <th>产品
+                            </th>
+                            <th>检验诊断信息
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            for (int i = 0; i < Model.Count; i++)
+                            {
+                            <tr>
+                                @Html.HiddenFor(m => m[i].examineDetailId)
+                                <td>
+                                    @Html.DisplayFor(m => m[i].examineDetailId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => m[i].ProductId)
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => m[i].productName)
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m[i].Result)
+                                </td>
+                            </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <input type="submit" class="btn btn-primary" value="确认" />
+            }
+        </div>
+    </div>
+</div>

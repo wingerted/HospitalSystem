@@ -1,0 +1,224 @@
+﻿@model     HospitalSystem.Models.ViewCharge
+@{
+    ViewBag.Title = "Charge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $('table tbody tr:odd').css("backgroundColor", "#dff0d8");
+        $('table tbody tr:even').css("backgroundColor", "#fcf8e3");
+        //tr:odd为奇数行，索引从0开始，0算偶数。
+        $("#ok").click(function () {
+            var data = {
+                PatientID: $('[name=PatientID]').val(),
+                totalpay: $('[name=totalPay]').val()
+            };
+
+            $.ajax({
+                url: "/Charge/ShowShouldPayMoney",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+
+                    $("#shouldpaymoney").html(data.totalPay);
+                    $("#patientid").html(data.PatientID);
+                    $('#modal').modal('show');
+                }
+            });
+        });
+
+        $("#calculator").click(function () {
+
+            var data = {
+                PatientID: $('[name=PatientID]').val(),
+                totalpay: $('[name=totalPay]').val(),
+                collectpay: $('[name=truepay]').val()
+            }
+            var change = $("#truepay").val() - data.totalpay;
+            $("#change").html(Math.round(change * 100) / 100);
+            $("#shouldpaymoney").html(data.totalpay);
+            $("#truepay").html(data.collectpay);
+            $('#modal').modal('show');
+        });
+
+        $("#subok").click(function () {
+            var data = {
+                PatientID: $('[name=PatientID]').val(),
+                totalpay: $('[name=totalPay]').val()
+            };
+
+            $.ajax({
+                url: "/Charge/Charge",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function () {
+                    
+                    window.location.reload();
+                }
+            });
+            
+      
+        });
+
+
+    })
+</script>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <h2>病人信息
+            </h2>
+
+            @using (Html.BeginForm())
+            {
+                <div class="editor-label">
+                    病人编号
+                </div>
+                <div class="editor-field">
+                    <input type="text" name="patientId" />
+                </div>
+                <input type="submit" class="btn btn-primary" value="查找" />
+            }
+
+            @Html.HiddenFor(m => m.PatientID)
+            <div class="editor-label">
+                @Html.LabelFor(m => m.PatientName)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.PatientName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(m => m.totalPay)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.totalPay)
+            </div>
+            @*    
+                <p>
+                    <input type="submit" value="收费" />
+                </p>*@
+
+            <button class="btn btn-primary" id="ok" type="submit">收费</button>
+
+
+            <div id="modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">收费
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <div class="editor-label">
+                        病人编号
+                    </div>
+                    <div class="editor-field" id="patientid">
+                    </div>
+
+                    <div class="editor-label">
+                        请付款
+                    </div>
+                    <div class="editor-field" id="shouldpaymoney">
+                    </div>
+                    <div class="editor-label">
+                        实际收款
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.CollectPay, new { @id = "truepay" })
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="calculator">找零</button>
+                    </div>
+                    <div class="editor-label">
+                        应找零:
+                    </div>
+                    <div class="editor-field" id="change">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal" id="subok" aria-hidden="true">确认</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="span6">
+            <h2>药方单
+            </h2>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>药品编号
+                        </th>
+                        <th>药品产品
+                        </th>
+                        <th>单价
+                        </th>
+                        <th>数量
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Medicinelist)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MedicineID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MedicineName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MedicinePrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MedicineCount)
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+            <h2>检验单
+            </h2>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>检验编号
+                        </th>
+                        <th>检验项目
+                        </th>
+                        <th>金额
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Examinelist)
+                    {
+
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExamineID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExamineName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExaminePrice)
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

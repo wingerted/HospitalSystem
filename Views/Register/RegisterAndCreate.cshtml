@@ -1,0 +1,118 @@
+﻿@model HospitalSystem.Models.patient
+@{
+    ViewBag.Title = "RegisterAndCreate";
+}
+
+
+
+<h2>新建病人账户</h2>
+<script type="text/javascript">
+    $(function () {
+
+
+
+        $("#subok").click(function () {
+            var data = {
+                Name: $('[name=Name]').val(),
+                Birthday: $('[name=Birthday]').val(),
+                Gender: $('[name=Gender]').val(),
+                Telephone: $('[name=Telephone]').val()
+            }
+
+            $.ajax({
+                url: "/Register/RegisterAndCreate",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    $('#modal').modal('show');
+                    //$('#yy').html(data.PatientID);
+                    $('[name=PatientID]').attr("value", data.PatientID);
+                    
+                    var patientId = data.PatientID;
+                }
+            });
+        });
+
+
+    })
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+    <fieldset>
+   
+
+       <div class="editor-label">
+                        姓名
+                    </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="editor-label">
+                       生日
+                    </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Birthday)
+            @Html.ValidationMessageFor(model => model.Birthday)
+        </div>
+
+     <div class="editor-label">
+                        性别
+                    </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Gender)
+            @Html.ValidationMessageFor(model => model.Gender)
+        </div>
+
+         <div class="editor-label">
+                        联系方式
+                    </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Telephone)
+            @Html.ValidationMessageFor(model => model.Telephone)
+        </div>
+         </fieldset>
+        }
+
+
+        <p>
+             <button class="btn btn-primary" id="subok" type="submit">收费</button>
+             @* <button class="btn btn-primary" id="subok" data-dismiss="modal" aria-hidden="true">确认收费</button>*@
+        </p>
+
+                    <div id="modal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">收费信息
+                    </h3>
+                </div>
+                <div class="modal-body">
+
+                 
+                    <div class="editor-label">
+                        请付工本费   1.5元
+                    </div>
+                 
+
+                    <div class="modal-footer">
+                          @using (Html.BeginForm("ReturnToIndex","Register"))
+                {         
+                     <div class="hide">
+                       @Html.TextBoxFor(m => m.PatientID, (long)@ViewBag.patient.PatientID)
+                         
+                    </div>
+                          <div class="editor-field" id="yy">
+                    </div>
+                              
+                              
+                        <input type="submit" class="btn btn-primary" value="确定" />
+                              
+                }
+                    </div>
+                </div>
+            </div>
+
+   

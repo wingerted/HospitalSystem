@@ -1,0 +1,66 @@
+﻿@model HospitalSystem.Models.patient
+@{
+    ViewBag.Title = "领药";
+}
+<script type="text/javascript">
+    $(function () {
+        $('#tb tbody tr:odd').css("backgroundColor", "#dff0d8");
+        $('#tb tbody tr:even').css("backgroundColor", "#fcf8e3");
+        //tr:odd为奇数行，索引从0开始，0算偶数。
+    })
+</script>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <h2>病人信息</h2>
+            @using (Html.BeginForm())
+            {
+                <h3>病人姓名：@ViewBag.PatientName</h3>
+                <div>
+                    <fieldset>
+                        <legend>病人ID</legend>
+                        @*<input class="input-medium search-query" type="text" />*@
+                        <div class="input-medium search-query">
+                            @Html.TextBoxFor(m => m.PatientID)
+                            @Html.ValidationMessageFor(m => m.PatientID)
+                        </div>
+                        <button type="submit" class="btn">查找</button>
+                    </fieldset>
+                </div>
+            }
+        </div>
+        <div class="span6">
+            <h2>领药单</h2>
+            
+            <table class="table table-condensed table-hover" id="tb">
+                <thead>
+                    <tr>
+                        <th>药品名称
+                        </th>
+                        <th>数量
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in @ViewBag.MedicineNameAndAmount)
+                    {
+                        <tr>
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>
+                                @item.Amount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <form>
+            <button class="btn btn-primary" type="submit">确认已领药</button>
+                </form>
+        </div>
+    </div>
+</div>
+
+
+

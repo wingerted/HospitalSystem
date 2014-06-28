@@ -1,0 +1,39 @@
+﻿@model IEnumerable<HospitalSystem.Models.medicine>
+@{
+    ViewBag.Title = "MedicineList";//开药前显示药品
+}
+
+<h2>MedicineList</h2>
+
+<table>
+    <tr>
+        <th>
+            MedicineName
+        </th>
+        <th>
+            DepartmentDescribe
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.MedicineName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MedicinePrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxNumber)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DepartmentID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DepartmentID }) |
+            @Html.CheckBox()
+        </td>
+    </tr>
+}
+
+</table>
+
